@@ -3,7 +3,7 @@ services:
     name: medicine-reminder
     runtime: node
     plan: free
-    buildCommand: npm_config_build_from_source=sqlite3 npm run build
+    buildCommand: npm_config_build_from_source=sqlite3 npm run build && npm_config_build_from_source=sqlite3 npm --prefix server rebuild sqlite3 && node -e "require('./server/node_modules/sqlite3')"
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
