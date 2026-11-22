@@ -36,3 +36,13 @@ check_braces.py
 *.docx
 *.pptx
 
+# Java & Maven
+target/
+*.class
+*.jar
+*.war
+.mvn/
+data/
+*.mv.db
+*.trace.db
+
