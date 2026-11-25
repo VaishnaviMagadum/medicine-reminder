@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedReminder - Sign In</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+  <div class="lovable-login-wrapper">
+    <div class="glass-login-container">
+      <div style="width: 60px; height: 60px; background: var(--primary-light); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.5rem auto;">
+        💊
+      </div>
+
+      <h1 style="font-size: 1.85rem; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 0.25rem;">Mediverse Buddy</h1>
+      <p style="color: var(--text-muted); font-weight: 600; font-size: 0.95rem; margin-bottom: 1.75rem;">Your intelligent health partner</p>
+
+      <!-- Role Selector -->
+      <div class="auth-type-selector">
+        <button id="user-role-tab" class="auth-tab active" onclick="switchRole('user')">User</button>
+        <button id="admin-role-tab" class="auth-tab" onclick="switchRole('admin')">Admin</button>
+      </div>
+
+      <!-- Error Message Box -->
+      <div id="auth-error" style="display: none; background: #fee2e2; color: #b91c1c; padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 700; margin-bottom: 1.25rem;"></div>
+
+      <!-- Login / Register Form -->
+      <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+        <div class="form-group" style="text-align: left;">
+          <label>Username</label>
+          <input type="text" id="username" class="form-input" placeholder="Enter username" required>
+        </div>
+
+        <div class="form-group" style="text-align: left;">
+          <label>Password</label>
+          <input type="password" id="password" class="form-input" placeholder="Enter password" required>
+        </div>
+
+        <button type="submit" id="submit-btn" class="btn-primary" style="width: 100%; justify-content: center; padding: 1rem; margin-top: 1rem;">
+          Sign In →
+        </button>
+      </form>
+
+      <!-- Instant Demo Button -->
+      <button onclick="instantDemoLogin()" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem; margin-top: 0.75rem; background: #10b981; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);">
+        ⚡ Instant Demo Walkthrough
+      </button>
+
+      <!-- Toggle Sign In / Create Account -->
+      <div style="margin-top: 1.5rem; font-size: 0.9rem; font-weight: 600; color: var(--text-muted);">
+        <span id="auth-toggle-text">New here?</span>
+        <button id="auth-toggle-btn" onclick="toggleAuthMode()" style="background: none; border: none; color: var(--primary); font-weight: 800; cursor: pointer; margin-left: 0.25rem;">
+          Create Account
+        </button>
+      </div>
+
+      <div class="trust-badges">
+        <span>🛡️ SECURE ENCRYPTED</span>
+        <span>⚡ JAVA & SQL BACKED</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

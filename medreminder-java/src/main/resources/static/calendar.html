@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedReminder - Calendar Schedule</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span style="font-size: 1.8rem;">💊</span>
+        <h2>MedReminder</h2>
+      </div>
+
+      <nav class="nav-links">
+        <button class="nav-btn" onclick="window.location.href='/index.html'">🏠 Dashboard</button>
+        <button class="nav-btn active">📅 Calendar</button>
+        <button id="admin-nav-link" class="nav-btn" style="display: none;" onclick="window.location.href='/admin.html'">⚙️ Admin Panel</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="nav-btn" onclick="toggleTheme()">🌓 Switch Theme</button>
+        <button class="nav-btn" style="color: var(--danger);" onclick="logout()">🚪 Sign Out</button>
+      </div>
+    </aside>
+
+    <main class="main-wrapper">
+      <header class="top-header">
+        <div class="header-greeting">
+          <h1>Medication Calendar</h1>
+          <p>Full 7-day schedule view of your active prescriptions</p>
+        </div>
+        <button class="btn-primary" onclick="window.location.href='/index.html'">← Back to Dashboard</button>
+      </header>
+
+      <div class="glass-card" style="padding: 2.5rem; background: var(--card-bg); border-radius: var(--radius-lg); border: 1px solid var(--border-glass);">
+        <div id="calendar-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1rem;">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return (window.location.href = '/login.html');
+
+      if (localStorage.getItem('role') === 'admin') {
+        document.getElementById('admin-nav-link').style.display = 'flex';
+      }
+
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const meds = await medicineService.getAll().catch(() => []);
+
+      const grid = document.getElementById('calendar-grid');
+      grid.innerHTML = days.map((day, idx) => `
+        <div style="background: var(--bg-main); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+          <h4 style="font-weight: 800; font-size: 1rem; color: var(--primary); margin-bottom: 1rem;">${day}</h4>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            ${meds.length > 0 ? meds.map(m => `
+              <div style="background: var(--card-bg); padding: 0.6rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 700; border-left: 3px solid var(--primary);">
+                ${m.name} (${m.reminderTime})
+              </div>
+            `).join('') : '<p style="color: var(--text-muted); font-size: 0.75rem;">No doses</p>'}
+          </div>
+        </div>
+      `).join('');
+    });
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '/login.html';
+    }
+  </script>
+</body>
+</html>

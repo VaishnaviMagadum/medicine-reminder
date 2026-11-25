@@ -132,3 +132,4 @@ If you want to use MySQL instead of the built-in file-based SQL database:
    CREATE DATABASE medreminder;
    ```
 Spring Boot will automatically generate the tables and seed demo data on first start.
+

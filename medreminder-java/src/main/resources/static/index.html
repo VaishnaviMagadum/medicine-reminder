@@ -1,14 +1,251 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>client</title>
-    <script type="module" crossorigin src="/assets/index-ifvj9e4t.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BMzFFXe4.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedReminder - Health Companion</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Floating Glass Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span style="font-size: 1.8rem;">💊</span>
+        <h2>MedReminder</h2>
+      </div>
+
+      <nav class="nav-links">
+        <button class="nav-btn active" onclick="switchNav('home', this)">🏠 Dashboard</button>
+        <button class="nav-btn" onclick="openAddModal()">➕ Add Medicine</button>
+        <button class="nav-btn" onclick="switchNav('inventory', this)">📦 Inventory Refill</button>
+        <button class="nav-btn" onclick="window.location.href='/calendar.html'">📅 Calendar</button>
+        <button class="nav-btn" onclick="openExerciseModal('Morning Zen Yoga')">🏃 Workout Coach</button>
+        <button id="admin-nav-link" class="nav-btn" style="display: none;" onclick="window.location.href='/admin.html'">⚙️ Admin Panel</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="nav-btn" onclick="toggleTheme()">🌓 Switch Theme</button>
+        <button class="nav-btn" style="color: var(--danger);" onclick="logout()">🚪 Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-wrapper">
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="header-greeting">
+          <h1 id="user-greeting">Welcome, Patient</h1>
+          <p id="current-clock">Loading live health schedule...</p>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" onclick="openNudgeModal()" title="Email Doctor Alert">🔔</button>
+          <button class="btn-primary" onclick="openAddModal()">➕ New Medicine</button>
+        </div>
+      </header>
+
+      <!-- Hero Carousel -->
+      <section class="hero-banner">
+        <div class="hero-text">
+          <span class="hero-tag">🌟 Health Companion</span>
+          <h2>Never Miss a Dose. Live Confidently.</h2>
+          <p>Guided workouts, smart reminder alerts, and persistent local privacy powered by Java and SQL.</p>
+          <button class="btn-primary" onclick="openExerciseModal('Morning Zen Yoga')" style="background: white; color: var(--primary);">
+            ▶ Start Guided Workout
+          </button>
+        </div>
+        <img src="assets/medical_hero-U_HXSPpS.png" alt="Medical Hero">
+      </section>
+
+      <!-- Health Metrics Grid (BMI, Water, Calories) -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon bmi">⚖️</div>
+          <div class="stat-info">
+            <h3 id="stat-bmi">22.9</h3>
+            <p>BMI (Normal Range)</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon water">💧</div>
+          <div class="stat-info">
+            <h3 id="stat-water">2.5 L</h3>
+            <p>Daily Water Goal</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon calories">🔥</div>
+          <div class="stat-info">
+            <h3 id="stat-calories">1,791</h3>
+            <p>Active Calories</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dashboard Columns: Medicines & Cartoon Doctor Assistant -->
+      <div class="dashboard-columns">
+        <!-- Left: Medicine Schedule -->
+        <div>
+          <div class="section-header">
+            <h2>Today's Medicines</h2>
+            <span id="med-count-badge" class="dosage-badge">0 Active</span>
+          </div>
+          <div id="medicine-list-container" class="medicine-list">
+            <!-- Rendered dynamically by app.js -->
+          </div>
+        </div>
+
+        <!-- Right: Animated Cartoon Doctor Health Assistant -->
+        <aside class="assistant-card">
+          <div class="doctor-avatar-wrapper">
+            <img src="assets/health_assistant-BgAJxki9.png" alt="Doctor Assistant" class="doctor-img">
+            <h3 style="font-size: 1.25rem; font-weight: 800; margin-top: 0.5rem;">Dr. Med-Bot</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">Simulated Health Advisor</p>
+          </div>
+
+          <div id="doctor-speech-bubble" class="chat-bubble">
+            Hello! I'm your health buddy. Remember to stay hydrated and take your doses on time!
+          </div>
+
+          <div class="chat-input-bar">
+            <input type="text" id="doctor-chat-input" placeholder="Ask about water, food, sleep..." onkeydown="if(event.key==='Enter') handleDoctorChat()">
+            <button class="btn-primary" onclick="handleDoctorChat()">Ask</button>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Guided Workout Section -->
+      <section class="workout-section">
+        <div class="section-header">
+          <h2>Interactive Guided Workouts</h2>
+          <span style="color: var(--primary); font-weight: 800; font-size: 0.9rem;">Coach Mode Active</span>
+        </div>
+        <div class="workout-cards-grid">
+          <div class="workout-card" onclick="openExerciseModal('Morning Zen Yoga')">
+            <div>
+              <div class="workout-emoji">🧘</div>
+              <h4>Morning Zen Yoga</h4>
+              <p>Gentle flow to awaken flexibility, mind, and calm morning energy.</p>
+            </div>
+            <span class="workout-badge">▶ Start Session (10m)</span>
+          </div>
+          <div class="workout-card" onclick="openExerciseModal('Full Body Sculpt')">
+            <div>
+              <div class="workout-emoji">💪</div>
+              <h4>Full Body Sculpt</h4>
+              <p>Intermediate sculpt session for total body toning and endurance.</p>
+            </div>
+            <span class="workout-badge">▶ Start Session (30m)</span>
+          </div>
+          <div class="workout-card" onclick="openExerciseModal('Core Power HIIT')">
+            <div>
+              <div class="workout-emoji">🔥</div>
+              <h4>Core Power HIIT</h4>
+              <p>High-energy core strength and cardiovascular fat-burn flow.</p>
+            </div>
+            <span class="workout-badge">▶ Start Session (15m)</span>
+          </div>
+          <div class="workout-card" onclick="openExerciseModal('Pilates')">
+            <div>
+              <div class="workout-emoji">🤸</div>
+              <h4>Posture Pilates</h4>
+              <p>Focus on control, deep breath work, spinal balance, and core stability.</p>
+            </div>
+            <span class="workout-badge">▶ Start Session (20m)</span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Add Medicine Modal -->
+  <div id="add-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeAddModal()">&times;</button>
+      <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem;">➕ Add New Medicine</h2>
+      <form onsubmit="handleAddMedicine(event)">
+        <div class="form-group">
+          <label>Medicine Name</label>
+          <input type="text" id="med-name" class="form-input" placeholder="e.g. Amoxicillin" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Dosage</label>
+            <input type="text" id="med-dosage" class="form-input" placeholder="e.g. 500mg" required>
+          </div>
+          <div class="form-group">
+            <label>Reminder Time</label>
+            <input type="time" id="med-time" class="form-input" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Meal Type</label>
+            <select id="med-meal" class="form-input">
+              <option value="after food">After Food</option>
+              <option value="before food">Before Food</option>
+              <option value="with food">With Food</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Pills in Stock</label>
+            <input type="number" id="med-quantity" class="form-input" value="30" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Doctor's Email (for alerts)</label>
+          <input type="email" id="med-email" class="form-input" placeholder="doctor@clinic.com">
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 1rem; margin-top: 1rem;">
+          Save to SQL Database
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Guided Exercise Coach Modal -->
+  <div id="exercise-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 900px; padding: 0; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr;">
+      <div style="background: linear-gradient(135deg, #e0e7ff, #f3e8ff); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; position: relative;">
+        <button class="modal-close" onclick="closeExerciseModal()" style="top: 1rem; left: 1rem; right: auto;">&times;</button>
+        <img id="exercise-coach-img" src="assets/health_assistant-BgAJxki9.png" style="width: 240px; filter: drop-shadow(0 20px 30px rgba(99, 102, 241, 0.3));">
+        <div id="exercise-timer-display" style="font-size: 3rem; font-weight: 900; color: var(--primary); margin-top: 1rem;">
+          01:00
+        </div>
+        <p id="exercise-status-text" style="font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Ready to Start</p>
+      </div>
+      <div style="padding: 2.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <h2 id="exercise-title" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem;">Morning Zen Yoga</h2>
+          <p id="exercise-desc" style="color: var(--text-muted); font-size: 0.95rem; font-weight: 600; margin-bottom: 1.5rem;">
+            A gentle flow to wake up your body and mind with calm breath control.
+          </p>
+          <div id="exercise-steps" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <!-- Injected by app.js -->
+          </div>
+        </div>
+        <button id="exercise-start-btn" class="btn-primary" onclick="toggleWorkoutTimer()" style="width: 100%; justify-content: center; padding: 1rem; margin-top: 1.5rem;">
+          ▶ Start "Do with Me" Session
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Reminder Popup -->
+  <div id="reminder-popup" class="alert-popup" style="display: none;">
+    <div style="font-size: 2.5rem;">⏰</div>
+    <div>
+      <h3 style="font-weight: 800; color: var(--primary);">Medicine Reminder!</h3>
+      <p id="reminder-popup-msg" style="font-weight: 600; font-size: 0.9rem;">Time to take your scheduled dose.</p>
+    </div>
+    <button class="btn-primary" onclick="dismissReminder()">Taken ✅</button>
+  </div>
+
+  <!-- Audio element for chime -->
+  <audio id="chime-audio" src="assets/medicine_reminder.mp3" preload="auto"></audio>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
 </html>

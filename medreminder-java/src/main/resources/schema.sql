@@ -32,3 +32,4 @@ CREATE TABLE IF NOT EXISTS medicines (
 -- Indexes for high-performance lookup
 CREATE INDEX IF NOT EXISTS idx_medicines_user_id ON medicines(user_id);
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+

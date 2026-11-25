@@ -13,3 +13,4 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
     Optional<Medicine> findByIdAndUserId(Long id, Long userId);
     long countByUserId(Long userId);
 }
+

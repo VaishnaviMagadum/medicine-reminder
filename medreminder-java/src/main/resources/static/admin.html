@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedReminder - Admin Analytics</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span style="font-size: 1.8rem;">⚙️</span>
+        <h2>Admin Console</h2>
+      </div>
+
+      <nav class="nav-links">
+        <button class="nav-btn" onclick="window.location.href='/index.html'">🏠 User Dashboard</button>
+        <button class="nav-btn active">📊 SQL Overview</button>
+        <button class="nav-btn" onclick="window.open('/h2-console', '_blank')">🗄️ Open SQL Console</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="nav-btn" onclick="toggleTheme()">🌓 Switch Theme</button>
+        <button class="nav-btn" style="color: var(--danger);" onclick="logout()">🚪 Sign Out</button>
+      </div>
+    </aside>
+
+    <main class="main-wrapper">
+      <header class="top-header">
+        <div class="header-greeting">
+          <h1>System Overview & Database Metrics</h1>
+          <p>Live health statistics queried from SQL Database</p>
+        </div>
+        <button class="btn-primary" onclick="window.location.href='/index.html'">Switch to User View</button>
+      </header>
+
+      <!-- Admin Stats Grid -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon bmi">👥</div>
+          <div class="stat-info">
+            <h3 id="admin-total-users">-</h3>
+            <p>Total Registered Users</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon water">💊</div>
+          <div class="stat-info">
+            <h3 id="admin-total-meds">-</h3>
+            <p>Active Prescriptions</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon calories">⚡</div>
+          <div class="stat-info">
+            <h3 id="admin-status">Healthy</h3>
+            <p>Spring Boot API Status</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- User List Table -->
+      <div class="glass-card" style="padding: 2rem; background: var(--card-bg); border-radius: var(--radius-lg); border: 1px solid var(--border-glass); margin-bottom: 2rem;">
+        <h3 style="font-weight: 800; font-size: 1.25rem; margin-bottom: 1.5rem;">Registered Users in SQL</h3>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--border-glass); color: var(--text-muted); font-size: 0.85rem;">
+                <th style="padding: 0.75rem;">ID</th>
+                <th style="padding: 0.75rem;">Username</th>
+                <th style="padding: 0.75rem;">Role</th>
+                <th style="padding: 0.75rem;">Created Date</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-table">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role');
+
+      if (!token || role !== 'admin') {
+        alert('Access denied: Admins only. Please sign in with admin / adminpassword');
+        window.location.href = '/login.html';
+        return;
+      }
+
+      try {
+        const stats = await adminService.getStats();
+        if (stats) {
+          document.getElementById('admin-total-users').textContent = stats.totalUsers;
+          document.getElementById('admin-total-meds').textContent = stats.activeMeds;
+          document.getElementById('admin-status').textContent = stats.systemStatus;
+        }
+
+        const users = await adminService.getUsers();
+        const tbody = document.getElementById('admin-users-table');
+        if (users && users.length > 0) {
+          tbody.innerHTML = users.map(u => `
+            <tr style="border-bottom: 1px solid var(--border-glass); font-weight: 600; font-size: 0.9rem;">
+              <td style="padding: 0.75rem;">#${u.id}</td>
+              <td style="padding: 0.75rem; font-weight: 800; color: var(--primary);">${u.username}</td>
+              <td style="padding: 0.75rem;"><span class="dosage-badge">${u.role}</span></td>
+              <td style="padding: 0.75rem; color: var(--text-muted);">${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}</td>
+            </tr>
+          `).join('');
+        }
+      } catch (err) {
+        console.error('Failed to load admin metrics:', err);
+      }
+    });
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '/login.html';
+    }
+  </script>
+</body>
+</html>

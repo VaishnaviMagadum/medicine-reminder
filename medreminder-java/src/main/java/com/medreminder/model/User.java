@@ -58,3 +58,4 @@ public class User {
     public List<Medicine> getMedicines() { return medicines; }
     public void setMedicines(List<Medicine> medicines) { this.medicines = medicines; }
 }
+

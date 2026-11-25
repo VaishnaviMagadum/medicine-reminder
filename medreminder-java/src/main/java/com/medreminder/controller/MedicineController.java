@@ -144,3 +144,4 @@ public class MedicineController {
         return ResponseEntity.ok(Map.of("msg", "Alert sent successfully", "success", true));
     }
 }
+

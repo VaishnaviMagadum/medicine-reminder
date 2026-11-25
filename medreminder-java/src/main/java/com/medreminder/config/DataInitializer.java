@@ -89,3 +89,4 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println(">>> Demo users & medicines seeded successfully into SQL Database!");
     }
 }
+

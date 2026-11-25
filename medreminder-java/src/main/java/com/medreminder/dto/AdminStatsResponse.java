@@ -18,3 +18,4 @@ public class AdminStatsResponse {
     public int getAlertsToday() { return alertsToday; }
     public String getSystemStatus() { return systemStatus; }
 }
+

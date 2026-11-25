@@ -12,3 +12,4 @@ public class SpaController {
         return "forward:/index.html";
     }
 }
+

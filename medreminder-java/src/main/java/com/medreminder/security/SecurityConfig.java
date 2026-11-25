@@ -41,6 +41,11 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/",
                     "/index.html",
+                    "/login.html",
+                    "/calendar.html",
+                    "/admin.html",
+                    "/css/**",
+                    "/js/**",
                     "/assets/**",
                     "/favicon.svg",
                     "/icons.svg",
@@ -75,3 +80,4 @@ public class SecurityConfig {
         return source;
     }
 }
+
