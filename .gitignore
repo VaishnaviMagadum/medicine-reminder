@@ -37,6 +37,7 @@ check_braces.py
 *.pptx
 
 # Java & Maven
+tools/
 target/
 *.class
 *.jar
